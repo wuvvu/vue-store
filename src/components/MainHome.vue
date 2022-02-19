@@ -15,15 +15,18 @@
               <p>确定退出登录吗？</p>
               <div style="text-align: right; margin: 10px 0 0">
                 <el-button size="mini" type="text" @click="visible = false"
-                  >取消</el-button
+                >取消
+                </el-button
                 >
                 <el-button type="primary" size="mini" @click="logout"
-                  >确定</el-button
+                >确定
+                </el-button
                 >
               </div>
               <el-button type="text" slot="reference">{{
-                this.$store.getters.getUser.userName
-              }}</el-button>
+                  this.$store.getters.getUser.userName
+                }}
+              </el-button>
             </el-popover>
           </li>
           <li>
@@ -46,15 +49,15 @@
     <!-- 顶栏容器 -->
     <el-header>
       <el-menu
-        :default-active="activeIndex"
-        class="el-menu-demo"
-        mode="horizontal"
-        active-text-color="#409eff"
-        router
+          :default-active="activeIndex"
+          class="el-menu-demo"
+          mode="horizontal"
+          active-text-color="#409eff"
+          router
       >
         <div class="logo">
           <router-link to="/">
-            <img src="@/assets/imgs/logo.png" alt />
+            <img src="@/assets/imgs/logo.png" alt/>
           </router-link>
         </div>
         <el-menu-item index="/">首页</el-menu-item>
@@ -63,9 +66,9 @@
         <div class="so">
           <el-input placeholder="请输入搜索内容" v-model="search">
             <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click="searchClick"
+                slot="append"
+                icon="el-icon-search"
+                @click="searchClick"
             ></el-button>
           </el-input>
         </div>
@@ -90,8 +93,9 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import { mapGetters } from "vuex";
+import {mapActions} from "vuex";
+import {mapGetters} from "vuex";
+
 export default {
   name: "MainHome",
   beforeUpdate() {
@@ -124,21 +128,21 @@ export default {
       } else {
         // 用户已经登录,获取该用户的购物车信息
         this.$axios
-          .post("/api/user/shoppingCart/getShoppingCart", {
-            user_id: val.user_id,
-          })
-          .then((res) => {
-            if (res.data.code === "001") {
-              // 001 为成功, 更新vuex购物车状态
-              this.setShoppingCart(res.data.shoppingCartData);
-            } else {
-              // 提示失败信息
-              this.notifyError(res.data.msg);
-            }
-          })
-          .catch((err) => {
-            return Promise.reject(err);
-          });
+            .post("/api/user/shoppingCart/getShoppingCart", {
+              user_id: val.user_id,
+            })
+            .then((res) => {
+              if (res.data.code === "001") {
+                // 001 为成功, 更新vuex购物车状态
+                this.setShoppingCart(res.data.shoppingCartData);
+              } else {
+                // 提示失败信息
+                this.notifyError(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              return Promise.reject(err);
+            });
       }
     },
   },
@@ -165,7 +169,7 @@ export default {
     searchClick() {
       if (this.search != "") {
         // 跳转到全部商品页面,并传递搜索条件
-        this.$router.push({ path: "/goods", query: { search: this.search } });
+        this.$router.push({path: "/goods", query: {search: this.search}});
         this.search = "";
       }
     },
@@ -181,13 +185,16 @@ export default {
   background-color: #3d3d3d;
   margin-bottom: 20px;
 }
+
 .topbar .nav {
   width: 1225px;
   margin: 0 auto;
 }
+
 .topbar .nav ul {
   float: right;
 }
+
 .topbar .nav li {
   float: left;
   height: 40px;
@@ -197,40 +204,51 @@ export default {
   line-height: 40px;
   margin-left: 20px;
 }
+
 .topbar .nav .sep {
   color: #b0b0b0;
   font-size: 12px;
   margin: 0 5px;
 }
+
 .topbar .nav li .el-button {
   color: #b0b0b0;
 }
+
 .topbar .nav .el-button:hover {
   color: #fff;
 }
+
 .topbar .nav li a {
   color: #b0b0b0;
 }
+
 .topbar .nav a:hover {
   color: #fff;
 }
+
 .topbar .nav .shopCart {
   width: 120px;
   background: #424242;
 }
+
 .topbar .nav .shopCart:hover {
   background: #fff;
 }
+
 .topbar .nav .shopCart:hover a {
   color: #ff6700;
 }
+
 .topbar .nav .shopCart-full {
   width: 120px;
   background: #ff6700;
 }
+
 .topbar .nav .shopCart-full a {
   color: white;
 }
+
 /* 顶部导航栏CSS END */
 
 /* 顶栏容器CSS */
@@ -238,17 +256,20 @@ export default {
   max-width: 1225px;
   margin: 0 auto;
 }
+
 .el-header .logo {
   height: 60px;
   width: 189px;
   float: left;
   margin-right: 100px;
 }
+
 .el-header .so {
   margin-top: 10px;
   width: 300px;
   float: right;
 }
+
 /* 顶栏容器CSS END */
 
 /* 底栏容器CSS */
@@ -258,15 +279,18 @@ export default {
   background: #2f2f2f;
   padding-bottom: 20px;
 }
+
 .footer .ng-promise-box {
   border-bottom: 1px solid #3d3d3d;
   line-height: 145px;
 }
+
 .footer .ng-promise-box {
   margin: 0 auto;
   border-bottom: 1px solid #3d3d3d;
   line-height: 145px;
 }
+
 .footer .ng-promise-box .ng-promise p a {
   color: #fff;
   font-size: 20px;
@@ -278,21 +302,25 @@ export default {
   text-decoration: none;
   background: url("../assets/imgs/us-icon.png") no-repeat left 0;
 }
+
 .footer .github {
   height: 50px;
   line-height: 50px;
   margin-top: 20px;
 }
+
 .footer .github .github-but {
   width: 50px;
   height: 50px;
   margin: 0 auto;
   background: url("../assets/imgs/github.png") no-repeat;
 }
+
 .footer .mod_help {
   text-align: center;
   color: #888888;
 }
+
 .footer .mod_help p {
   margin: 20px 0 16px 0;
 }
@@ -301,11 +329,14 @@ export default {
   color: #888888;
   text-decoration: none;
 }
+
 .footer .mod_help p a:hover {
   color: #fff;
 }
+
 .footer .mod_help p span {
   padding: 0 22px;
 }
+
 /* 底栏容器CSS END */
 </style>

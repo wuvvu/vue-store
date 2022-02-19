@@ -24,7 +24,7 @@
         >
         <!-- 一级菜单 -->
           <el-menu-item
-            :index="item.id + ''"
+            :index="item.id"
             v-for="item in menulist"
             :key="item.id"
           >
@@ -54,19 +54,22 @@ export default {
         id:"/shopManage",
         authName:"商品列表"
       },{
-        id:2,
+        id:"/analysis",
         authName:"市场分析"
-      },{
-        id:3,
-        authName:"实用性分析"
       }],
       // 是否折叠
       isCollapse: false,
-      activeIndex:'/shopManage'
+      activeIndex:"/shopManage"
     };
   },
+  created(){
+    console.log(this.$route)
+    this.test(this.$route.path)
+  },
   methods: {
-   
+    test(index){
+      this.activeIndex = index
+    }
   },
 };
 </script>

@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      backStageRoute: ["/admin", "/backHome", "/shopManage"],
+      backStageRoute: ["/admin", "/backHome", "/shopManage","/analysis"],
       isBackStage: false,
       isReload: true,
       isBackLogin: false,
@@ -29,8 +29,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function (val, old) {
-        console.log(val, old);
+      handler: function (val) {
         this.checkAdminRoute(val.path);
       },
       // 深度观察监听

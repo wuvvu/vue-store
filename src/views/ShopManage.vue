@@ -2,7 +2,7 @@
   <div class="shop-manege-box">
     <div class="box-title">商品管理</div>
     <div class="search-box">
-      <el-select v-model="category_name" placeholder="请选择" size="small">
+      <el-select v-model="category_name" placeholder="请选择需要查询的分类" size="small">
         <el-option
           v-for="item in categoryList"
           :key="item.category_id"
@@ -11,7 +11,8 @@
         >
         </el-option>
       </el-select>
-      <el-input style="width:300px" size="small" placeholder="请输入" v-model="goodSearch"></el-input>
+      <el-input style="width:300px;margin: 0 15px;" size="small" placeholder="请输入商品名称" v-model="goodSearch"></el-input>
+      <el-button size="small">查询</el-button>
     </div>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column fixed prop="date" label="日期" width="150">
@@ -31,6 +32,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页 -->
+    <div class="pagination">
+      <el-pagination
+          background
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          :total="total"
+          @current-change="currentChange"
+      ></el-pagination>
+    </div>
+    <!-- 分页END -->
   </div>
 </template>
 
@@ -57,6 +69,17 @@ export default {
         .catch((err) => {
           return Promise.reject(err);
         });
+    },
+
+    // 页码变化调用currentChange方法
+    currentChange(currentPage) {
+      this.currentPage = currentPage;
+      // if (this.search != "") {
+      //   this.getProductBySearch();
+      // } else {
+      //   this.getData();
+      // }
+      // this.backtop();
     },
   },
 
@@ -98,7 +121,12 @@ export default {
       ],
       categoryList: "", //分类列表
       category_name:'',// 分类搜索
-      goodSearch:"" // 分类名称搜索
+      goodSearch:"", // 分类名称搜索
+      pageSize: 15, // 每页显示的商品数量
+      currentPage: 1, //当前页码
+      total: 0, // 商品总量
+
+
     };
   },
 
@@ -122,5 +150,10 @@ export default {
     flex-wrap: nowrap;
     justify-content: flex-end;
     padding: 15px 0;
+}
+ .pagination {
+  height: 50px;
+  text-align: center;
+   margin-top: 10px;
 }
 </style>
