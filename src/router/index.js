@@ -83,7 +83,15 @@ const routes = [
         name: 'ShopManage',
         component: () => import('../views/ShopManage.vue'),
         meta: {
-            requireAuth: true // 需要验证登录状态
+            requireAuth: false // 需要验证登录状态
+        }
+    },
+    {
+        path: '/analysis',
+        name: 'Analysis',
+        component: () => import('../views/Analysis.vue'),
+        meta: {
+            requireAuth: false // 需要验证登录状态
         }
     }
 ]
