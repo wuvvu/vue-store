@@ -193,11 +193,22 @@ export default {
             categoryName
           })
           .then(res => {
-            this[val] = res.data.Product;
+            this[val] = this.getBase64(res.data.Product)
           })
           .catch(err => {
             return Promise.reject(err);
           });
+    },
+    //获取图片base64
+    getBase64(arr){
+      let newArr = JSON.parse(JSON.stringify(arr));
+      for (let i = 0; i < arr.length; i++) {
+        if(newArr[i].product_picture && newArr[i].product_picture.length > 0){
+          const sliceIndex = newArr[i].product_picture.indexOf("/data:image");
+          newArr[i].product_picture.slice(sliceIndex)
+        }
+      }
+      return newArr
     }
   }
 };
