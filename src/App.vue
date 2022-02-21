@@ -1,12 +1,12 @@
 <template>
   <div id="app" name="app">
-    <template v-if="isBackStage">
-      <router-view v-if="isBackLogin"></router-view>
-      <BackHome v-else></BackHome>
-    </template>
-    <template v-else>
-      <main-home />
-    </template>
+      <template v-if="isBackStage">
+        <router-view v-if="isBackLogin"></router-view>
+        <BackHome v-else></BackHome>
+      </template>
+      <template v-else>
+        <main-home />
+      </template>
   </div>
 </template>
 
