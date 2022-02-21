@@ -63,7 +63,6 @@ export default {
     };
   },
   created(){
-    console.log(this.$route)
     this.test(this.$route.path)
   },
   methods: {

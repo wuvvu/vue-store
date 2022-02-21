@@ -4,7 +4,7 @@
     <div class="block">
       <el-carousel height="460px">
         <el-carousel-item v-for="item in carousel" :key="item.carousel_id">
-          <img style="height:460px;" :src="$target + item.imgPath" :alt="item.describes"/>
+          <img style="height:460px;" :src="item.imgPath" :alt="item.describes"/>
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -193,23 +193,12 @@ export default {
             categoryName
           })
           .then(res => {
-            this[val] = this.getBase64(res.data.Product)
+            this[val] = res.data.Product
           })
           .catch(err => {
             return Promise.reject(err);
           });
     },
-    //获取图片base64
-    getBase64(arr){
-      let newArr = JSON.parse(JSON.stringify(arr));
-      for (let i = 0; i < arr.length; i++) {
-        if(newArr[i].product_picture && newArr[i].product_picture.length > 0){
-          const sliceIndex = newArr[i].product_picture.indexOf("/data:image");
-          newArr[i].product_picture.slice(sliceIndex)
-        }
-      }
-      return newArr
-    }
   }
 };
 </script>
