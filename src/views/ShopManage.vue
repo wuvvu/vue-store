@@ -1,6 +1,11 @@
 <template>
   <div class="shop-manege-box">
-    <div class="box-title">商品管理</div>
+    <div class="box-title">
+      <div class="title-text">商品管理</div>
+      <div class="upload-good">
+        <el-button size="small" @click="openUpload">上传商品</el-button>
+      </div>
+    </div>
     <div class="search-box">
       <el-select v-model="category_name" placeholder="请选择需要查询的分类" size="small">
         <el-option
@@ -14,21 +19,19 @@
       <el-input style="width:300px;margin: 0 15px;" size="small" placeholder="请输入商品名称" v-model="goodSearch"></el-input>
       <el-button size="small">查询</el-button>
     </div>
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column fixed prop="date" label="日期" width="150">
-      </el-table-column>
-      <el-table-column prop="name" label="姓名" width="120"> </el-table-column>
-      <el-table-column prop="province" label="省份" width="120">
-      </el-table-column>
-      <el-table-column prop="city" label="市区" width="120"> </el-table-column>
-      <el-table-column prop="address" label="地址"> </el-table-column>
-      <el-table-column prop="zip" label="邮编" width="120"> </el-table-column>
+    <el-table :data="product" border style="width: 100%">
+      <el-table-column fixed prop="product_name" label="商品名称"></el-table-column>
+      <el-table-column prop="product_intro" label="商品描述"></el-table-column>
+      <el-table-column prop="product_title" label="商品标题"> </el-table-column>
+      <el-table-column prop="product_num" label="商品数量" width="120"> </el-table-column>
+      <el-table-column prop="product_price" label="原价" width="120"> </el-table-column>
+      <el-table-column prop="product_selling_price" label="活动价格" width="120"> </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small"
-            >查看</el-button
+            >编辑</el-button
           >
-          <el-button type="text" size="small">编辑</el-button>
+          <el-button type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -43,18 +46,98 @@
       ></el-pagination>
     </div>
     <!-- 分页END -->
+
+<!--    上传弹窗-->
+    <el-dialog
+        title="商品详情"
+        :visible.sync="dialogVisible"
+        width="30%"
+        :before-close="handleClose">
+      <el-form ref="uploadForm" :model="uploadForm" label-width="80px" size="small">
+        <el-form-item prop="product_name" label="商品名称">
+          <el-input v-model="uploadForm.product_name"></el-input>
+        </el-form-item>
+        <el-form-item prop="region" label="商品分类">
+          <el-select v-model="uploadForm.region" placeholder="请选择分类">
+            <el-option
+                v-for="item in categoryList"
+                :key="item.category_id"
+                :label="item.category_name"
+                :value="item.category_id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="product_num" label="商品数量">
+          <el-input-number v-model="uploadForm.product_num" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item prop="product_picture" label="商品图片">
+          <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload">
+            <img v-if="uploadForm.product_picture" :src="uploadForm.product_picture" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
+        <el-form-item prop="product_price" label="商品原价">
+          <el-input type="number" v-model="uploadForm.product_price"></el-input>
+        </el-form-item>
+        <el-form-item prop="product_selling_price" label="商品现价">
+          <el-input type="number" v-model="uploadForm.product_selling_price"></el-input>
+        </el-form-item>
+        <el-form-item prop="product_intro" label="商品描述">
+          <el-input type="textarea" v-model="uploadForm.product_intro"></el-input>
+        </el-form-item>
+        <el-form-item prop="product_title" label="商品标题">
+          <el-input type="textarea" v-model="uploadForm.product_title"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="cancel">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false" >确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
   name: "ShopManage",
+  data() {
+    return {
+      categoryList: "", //分类列表
+      category_name:'',// 分类搜索
+      goodSearch:"", // 分类名称搜索
+      pageSize: 10, // 每页显示的商品数量
+      currentPage: 1, //当前页码
+      total: 0, // 商品总量
+      product:[], //商品信息
+      dialogVisible:false,
+      uploadForm: {
+        category_id: '', //分类
+        product_intro: '', //描述
+        product_name: '', //名称
+        product_num: '', // 数量
+        product_picture: '', // 图片
+        product_price: '', // 原价
+        product_sales: '',
+        product_selling_price: '', //现价
+        product_title: '' //  标题
+      }
+
+    };
+  },
+
   methods: {
     handleClick(row) {
       console.log(row);
     },
     // 向后端请求分类列表数据
     getCategory() {
+      console.log(1111)
       this.$axios
         .post("/api/product/getCategory", {})
         .then((res) => {
@@ -74,70 +157,87 @@ export default {
     // 页码变化调用currentChange方法
     currentChange(currentPage) {
       this.currentPage = currentPage;
-      // if (this.search != "") {
-      //   this.getProductBySearch();
-      // } else {
-      //   this.getData();
-      // }
-      // this.backtop();
+      this.getData()
     },
+
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+          .then(()=> {
+            done();
+            this.cancel();
+          })
+          .catch(()=> {});
+    },
+
+    // 上传
+    openUpload(){
+      this.dialogVisible = true;
+    },
+
+    // 向后端请求全部商品或分类商品数据
+    getData() {
+      // 如果分类列表为空则请求全部商品数据，否则请求分类商品数据
+      const api ="/api/product/getAllProduct"
+      this.$axios
+          .post(api, {
+            categoryID: this.categoryID,
+            currentPage: this.currentPage,
+            pageSize: this.pageSize
+          })
+          .then(res => {
+            this.product = res.data.Product;
+            this.total = res.data.total;
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+    },
+
+    // 上传成功
+    handleAvatarSuccess(res, file) {
+      this.uploadForm.product_picture = URL.createObjectURL(file.raw);
+    },
+    // 上传之前
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }
+      return isJPG && isLt2M;
+    },
+
+    //取消上传
+    cancel(){
+      this.dialogVisible = false;
+      this.$refs.uploadForm.resetFields()
+    }
   },
 
-  data() {
-    return {
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
-      categoryList: "", //分类列表
-      category_name:'',// 分类搜索
-      goodSearch:"", // 分类名称搜索
-      pageSize: 15, // 每页显示的商品数量
-      currentPage: 1, //当前页码
-      total: 0, // 商品总量
-
-
-    };
-  },
 
   created() {
     // 获取分类列表
     this.getCategory();
+    this.getData()
   },
 };
 </script>
 
-<style>
+<style scoped>
+.box-title{
+  width: 100%;
+  height: 55px;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: #dddddd solid 1px;
+}
+
 .shop-manege-box {
   margin: 0 20px;
   padding: 10px;
@@ -155,5 +255,32 @@ export default {
   height: 50px;
   text-align: center;
    margin-top: 10px;
+}
+
+</style>
+
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
