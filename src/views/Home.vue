@@ -3,7 +3,7 @@
     <!-- 轮播图 -->
     <div class="block">
       <el-carousel height="460px">
-        <el-carousel-item v-for="item in carousel" :key="item.carousel_id">
+        <el-carousel-item v-for="item in carousel" :key="item.imgPath">
           <img style="height:460px;" :src="item.imgPath" :alt="item.describes"/>
         </el-carousel-item>
       </el-carousel>
