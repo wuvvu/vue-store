@@ -26,12 +26,13 @@
       <el-table-column prop="product_num" label="商品数量" width="120"> </el-table-column>
       <el-table-column prop="product_price" label="原价" width="120"> </el-table-column>
       <el-table-column prop="product_selling_price" label="活动价格" width="120"> </el-table-column>
+      <el-table-column prop="product_sales" label="销量" width="120"> </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small"
             >编辑</el-button
           >
-          <el-button type="text" size="small">删除</el-button>
+          <el-button type="text" size="small" @click="delGoods(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -58,7 +59,7 @@
           <el-input v-model="uploadForm.product_name"></el-input>
         </el-form-item>
         <el-form-item prop="region" label="商品分类">
-          <el-select v-model="uploadForm.region" placeholder="请选择分类">
+          <el-select v-model="uploadForm.category_id" placeholder="请选择分类">
             <el-option
                 v-for="item in categoryList"
                 :key="item.category_id"
@@ -72,15 +73,18 @@
           <el-input-number v-model="uploadForm.product_num" :min="1"></el-input-number>
         </el-form-item>
         <el-form-item prop="product_picture" label="商品图片">
-          <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload">
-            <img v-if="uploadForm.product_picture" :src="uploadForm.product_picture" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+          <input ref="inputFile" type="file" @change="inputFile" style="opacity: 0;width: 0" />
+          <el-button type="primary" size="small" @click="uploadClick">点击上传</el-button>
+          <div style="width: 100%;height: 220px;display: flex;flex-wrap: wrap;border: #dddddd 1px dashed ">
+            <div v-for="(item,index) in uploadForm.product_picture" :key="index" style="width: 100px;height: 100px;display: flex;margin-right: 5px;margin-top: 5px;">
+              <i class="el-icon-circle-close del-icon" @click="delImg(index)"></i>
+              <el-image style="width: 100px; height: 100px"
+                        :src="item"
+                        fit="contain"></el-image>
+            </div>
+          </div>
+
+
         </el-form-item>
         <el-form-item prop="product_price" label="商品原价">
           <el-input type="number" v-model="uploadForm.product_price"></el-input>
@@ -97,7 +101,62 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
     <el-button @click="cancel">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false" >确 定</el-button>
+    <el-button type="primary" @click="uploadGoods" >确 定</el-button>
+  </span>
+    </el-dialog>
+
+<!--    编辑弹窗-->
+    <el-dialog
+        title="商品详情"
+        :visible.sync="editDialogVisible"
+        width="30%"
+        :before-close="handleClose">
+      <el-form ref="uploadForm" :model="uploadForm" label-width="80px" size="small">
+        <el-form-item prop="product_name" label="商品名称">
+          <el-input v-model="uploadForm.product_name"></el-input>
+        </el-form-item>
+        <el-form-item prop="region" label="商品分类">
+          <el-select v-model="uploadForm.category_id" placeholder="请选择分类">
+            <el-option
+                v-for="item in categoryList"
+                :key="item.category_id"
+                :label="item.category_name"
+                :value="item.category_id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="product_num" label="商品数量">
+          <el-input-number v-model="uploadForm.product_num" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item prop="product_picture" label="商品图片">
+          <input ref="inputFile" type="file" @change="inputFile" style="opacity: 0;width: 0" />
+          <el-button type="primary" size="small" @click="uploadClick">点击上传</el-button>
+          <div style="width: 100%;height: 220px;display: flex;flex-wrap: wrap;border: #dddddd 1px dashed ">
+            <div v-for="(item,index) in uploadForm.product_picture" :key="index" style="width: 100px;height: 100px;display: flex;margin-right: 5px;margin-top: 5px;">
+              <i class="el-icon-circle-close del-icon" @click="delImg(index)"></i>
+              <el-image style="width: 100px; height: 100px"
+                        :src="item"
+                        fit="contain"></el-image>
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item prop="product_price" label="商品原价">
+          <el-input type="number" v-model="uploadForm.product_price"></el-input>
+        </el-form-item>
+        <el-form-item prop="product_selling_price" label="商品现价">
+          <el-input type="number" v-model="uploadForm.product_selling_price"></el-input>
+        </el-form-item>
+        <el-form-item prop="product_intro" label="商品描述">
+          <el-input type="textarea" v-model="uploadForm.product_intro"></el-input>
+        </el-form-item>
+        <el-form-item prop="product_title" label="商品标题">
+          <el-input type="textarea" v-model="uploadForm.product_title"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="cancel">取 消</el-button>
+    <el-button type="primary" @click="editGoods" >确 定</el-button>
   </span>
     </el-dialog>
   </div>
@@ -116,28 +175,48 @@ export default {
       total: 0, // 商品总量
       product:[], //商品信息
       dialogVisible:false,
+      editDialogVisible:false,
       uploadForm: {
         category_id: '', //分类
         product_intro: '', //描述
         product_name: '', //名称
         product_num: '', // 数量
-        product_picture: '', // 图片
+        product_picture: [], // 图片
         product_price: '', // 原价
-        product_sales: '',
+        product_sales: '', // 销量
         product_selling_price: '', //现价
         product_title: '' //  标题
-      }
-
+      },
+      imgUrlNameList:[],
+      editId: 0
     };
   },
 
   methods: {
     handleClick(row) {
-      console.log(row);
+      // 获取商品图片
+        this.$axios
+            .post("/api/product/getDetailsPicture", {
+              productID: row.product_id
+            })
+            .then(res => {
+              console.log(res)
+              this.uploadForm = row;
+              this.uploadForm.product_picture = [];
+              for(let i = 0; i<res.data.ProductPicture.length;i++){
+                console.log(res.data.ProductPicture[i].product_picture)
+                this.uploadForm.product_picture.push(res.data.ProductPicture[i].product_picture)
+              }
+              this.editDialogVisible = true;
+
+            })
+            .catch(err => {
+              return Promise.reject(err);
+            });
+
     },
     // 向后端请求分类列表数据
     getCategory() {
-      console.log(1111)
       this.$axios
         .post("/api/product/getCategory", {})
         .then((res) => {
@@ -173,6 +252,68 @@ export default {
     openUpload(){
       this.dialogVisible = true;
     },
+    //上架
+    uploadGoods(){
+      const api = "/api/admin/product/addProduct"
+      this.$axios
+          .post(api, {
+            category_id: this.uploadForm.category_id, //分类
+            product_intro: this.uploadForm.product_intro, //描述
+            product_name: this.uploadForm.product_name, //名称
+            product_picture: this.uploadForm.product_picture, // 图片
+            product_price: this.uploadForm.product_price, // 原价
+            product_selling_price: this.uploadForm.product_selling_price, //现价
+            product_title: this.uploadForm.product_title, //  标题
+            product_num: this.uploadForm.product_num, // 数量
+          })
+          .then(res => {
+            console.log(res)
+            this.dialogVisible = false;
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+    },
+
+    //编辑商品
+    editGoods(){
+      const api = "/api/admin/product/updateProduct"
+      this.$axios
+          .post(api, {
+            product_id:this.uploadForm.product_id,
+            category_id: this.uploadForm.category_id, //分类
+            product_intro: this.uploadForm.product_intro, //描述
+            product_name: this.uploadForm.product_name, //名称
+            product_picture: this.uploadForm.product_picture, // 图片
+            product_price: this.uploadForm.product_price, // 原价
+            product_selling_price: this.uploadForm.product_selling_price, //现价
+            product_title: this.uploadForm.product_title, //  标题
+            product_num: this.uploadForm.product_num, // 数量
+          })
+          .then(res => {
+            console.log(res)
+            this.editDialogVisible = false;
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+    },
+
+    // 删除商品
+    delGoods(e){
+      console.log(e)
+    //   const api = "/api/admin/product/updateProduct"
+    //   this.$axios
+    //       .post(api, {
+    //         product_id:e.product_id,
+    //       })
+    //       .then(res => {
+    //         console.log(res)
+    //       })
+    //       .catch(err => {
+    //         return Promise.reject(err);
+    //       });
+    // },
 
     // 向后端请求全部商品或分类商品数据
     getData() {
@@ -194,21 +335,33 @@ export default {
     },
 
     // 上传成功
-    handleAvatarSuccess(res, file) {
-      this.uploadForm.product_picture = URL.createObjectURL(file.raw);
+    uploadClick(){
+      this.$refs['inputFile'].dispatchEvent(new MouseEvent('click'))
     },
-    // 上传之前
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+    inputFile(e){
+      this.isUpload=true;
+      let file=e.target.files[0];
+      const fileName = file.name;
+      let url='';
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+      let that=this;
+      reader.onload = function () {
+        url=this.result.substring(this.result.indexOf(',')+1);
+        // that.imgUrl='data:image/png;base64,'+url
+        // that.$refs['imgimg'].setAttribute('src','data:image/png;base64,'+url);
+        that.imgUrlNameList.push({
+          name:fileName+1,
+        })
+        that.uploadForm.product_picture.push('data:image/png;base64,'+url)
+      };
+    },
 
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
-      }
-      return isJPG && isLt2M;
+    //删除图片
+    delImg(index){
+      this.imgUrlNameList.splice(index,1);
+      this.uploadForm.product_picture.splice(index,1);
+      this.$message.success('删除成功!');
     },
 
     //取消上传
@@ -282,5 +435,9 @@ export default {
   width: 178px;
   height: 178px;
   display: block;
+}
+.del-icon:hover{
+  color: #005cc5;
+  cursor:pointer;
 }
 </style>
