@@ -19,7 +19,7 @@
     <!-- 我的订单头部END -->
 
     <!-- 我的订单主要内容 -->
-    <div class="order-content" v-if="orders.length>0">
+    <div class="order-content" v-if="initData">
       <div class="content" v-for="(item,index) in orders" :key="index">
         <ul>
           <!-- 我的订单表头 -->
@@ -88,10 +88,11 @@ export default {
   data() {
     return {
       orders: [], // 订单列表
-      total: [] // 每个订单的商品数量及总价列表
+      total: [], // 每个订单的商品数量及总价列表
+      initData: false,
     };
   },
-  activated() {
+  created() {
     // 获取订单数据
     this.$axios
       .post("/api/user/order/getOrder", {
@@ -99,7 +100,12 @@ export default {
       })
       .then(res => {
         if (res.data.code === "001") {
+          console.log(this.orders)
           this.orders = res.data.orders;
+          console.log(this.orders)
+          this.$nextTick(()=>{
+            this.initData = true;
+          })
         } else {
           this.notifyError(res.data.msg);
         }
