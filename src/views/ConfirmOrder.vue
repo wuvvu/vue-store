@@ -22,26 +22,26 @@
     <!-- 主要内容容器 -->
     <div class="content">
       <!-- 选择地址 -->
-      <div class="section-address">
-        <p class="title">收货地址</p>
-        <div class="address-body">
-          <ul>
-            <li
-              :class="item.id == confirmAddress ? 'in-section' : ''"
-              v-for="item in address"
-              :key="item.id"
-            >
-              <h2>{{item.name}}</h2>
-              <p class="phone">{{item.phone}}</p>
-              <p class="address">{{item.address}}</p>
-            </li>
-            <li class="add-address">
-              <i class="el-icon-circle-plus-outline"></i>
-              <p>添加新地址</p>
-            </li>
-          </ul>
-        </div>
-      </div>
+<!--      <div class="section-address">-->
+<!--        <p class="title">收货地址</p>-->
+<!--        <div class="address-body">-->
+<!--          <ul>-->
+<!--            <li-->
+<!--              :class="item.id == confirmAddress ? 'in-section' : ''"-->
+<!--              v-for="item in address"-->
+<!--              :key="item.id"-->
+<!--            >-->
+<!--              <h2>{{item.name}}</h2>-->
+<!--              <p class="phone">{{item.phone}}</p>-->
+<!--              <p class="address">{{item.address}}</p>-->
+<!--            </li>-->
+<!--            <li class="add-address">-->
+<!--              <i class="el-icon-circle-plus-outline"></i>-->
+<!--              <p>添加新地址</p>-->
+<!--            </li>-->
+<!--          </ul>-->
+<!--        </div>-->
+<!--      </div>-->
       <!-- 选择地址END -->
 
       <!-- 商品及优惠券 -->
@@ -69,12 +69,12 @@
       <!-- 配送方式END -->
 
       <!-- 发票 -->
-      <div class="section-invoice">
-        <p class="title">发票</p>
-        <p class="invoice">电子发票</p>
-        <p class="invoice">个人</p>
-        <p class="invoice">商品明细</p>
-      </div>
+<!--      <div class="section-invoice">-->
+<!--        <p class="title">发票</p>-->
+<!--        <p class="invoice">电子发票</p>-->
+<!--        <p class="invoice">个人</p>-->
+<!--        <p class="invoice">商品明细</p>-->
+<!--      </div>-->
       <!-- 发票END -->
 
       <!-- 结算列表 -->
@@ -89,18 +89,18 @@
               <span class="title">商品总价：</span>
               <span class="value">{{getTotalPrice}}元</span>
             </li>
-            <li>
-              <span class="title">活动优惠：</span>
-              <span class="value">-0元</span>
-            </li>
-            <li>
-              <span class="title">优惠券抵扣：</span>
-              <span class="value">-0元</span>
-            </li>
-            <li>
-              <span class="title">运费：</span>
-              <span class="value">0元</span>
-            </li>
+<!--            <li>-->
+<!--              <span class="title">活动优惠：</span>-->
+<!--              <span class="value">-0元</span>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--              <span class="title">优惠券抵扣：</span>-->
+<!--              <span class="value">-0元</span>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--              <span class="title">运费：</span>-->
+<!--              <span class="value">0元</span>-->
+<!--            </li>-->
             <li class="total">
               <span class="title">应付总额：</span>
               <span class="value">

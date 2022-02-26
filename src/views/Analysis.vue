@@ -1,7 +1,20 @@
 <template>
-  <div style="height: 100%;width: 100%;background-color: #fff;">
-    <div>市场分析</div>
-    <div id="main" :style="{width: '1000px', height: '500px'}"></div>
+  <div style="height: calc(100% - 40px);width: calc(100% - 40px);background-color: #fff;padding: 20px">
+    <div style="border-bottom: #dddddd 1px solid;display: flex;align-items: center; height: 30px;font-size: 18px">市场分析</div>
+    <div style="margin:15px 0">
+      <span> 选择分类： </span>
+      <el-select v-model="category_name" placeholder="请选择需要查询的分类" size="small" @change="changeCategory">
+        <el-option
+            v-for="item in categoryList"
+            :key="item.category_id"
+            :label="item.category_name"
+            :value="item.category_id"
+        >
+        </el-option>
+      </el-select>
+    </div>
+
+    <div id="main" :style="{width: '100%', height: '700px'}"></div>
   </div>
 </template>
 
@@ -12,8 +25,17 @@ export default {
   name: "Analysis",
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      category_name:1,// 分类搜索
+      categoryList: "", //分类列表
+      goodsNameList:[],
+      goodsSalesList:[],
+
     }
+  },
+  created() {
+    this.getCategory()
+    this.changeCategory()
   },
   mounted () {
     this.drawLine();
@@ -22,70 +44,90 @@ export default {
     drawLine() {
       let chartDom = document.getElementById('main');
       let myChart = echarts.init(chartDom);
-      let option = {
-        title: {
-          text: 'Stacked Line'
-        },
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {}
-          }
-        },
+      let option = option = {
         xAxis: {
           type: 'category',
-          boundaryGap: false,
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: this.goodsNameList
+        },
+        yAxis: {
+          type: 'value'
+        },
+        grid:{
+          bottom:200+'px',
+        },
+        series: [
+          {
+            data: this.goodsSalesList,
+            type: 'bar'
+          }
+        ]
+      };
+      option && myChart.setOption(option);
+    },
+
+    initCharts(nameData,seriesData){
+      let chartDom = document.getElementById('main');
+      let myChart = echarts.init(chartDom);
+      let option = option = {
+        xAxis: {
+          type: 'category',
+          data: nameData,
+          axisLabel: {
+            interval:0,
+            rotate:-40
+          }
         },
         yAxis: {
           type: 'value'
         },
         series: [
           {
-            name: 'Email',
-            type: 'line',
-            stack: 'Total',
-            data: [120, 132, 101, 134, 90, 230, 210]
-          },
-          {
-            name: 'Union Ads',
-            type: 'line',
-            stack: 'Total',
-            data: [220, 182, 191, 234, 290, 330, 310]
-          },
-          {
-            name: 'Video Ads',
-            type: 'line',
-            stack: 'Total',
-            data: [150, 232, 201, 154, 190, 330, 410]
-          },
-          {
-            name: 'Direct',
-            type: 'line',
-            stack: 'Total',
-            data: [320, 332, 301, 334, 390, 330, 320]
-          },
-          {
-            name: 'Search Engine',
-            type: 'line',
-            stack: 'Total',
-            data: [820, 932, 901, 934, 1290, 1330, 1320]
+            data: seriesData,
+            type: 'bar'
           }
         ]
       };
       option && myChart.setOption(option);
-    }
+    },
+
+    // 向后端请求分类列表数据
+    getCategory() {
+      this.$axios
+          .post("/api/product/getCategory", {})
+          .then((res) => {
+            const cate = res.data.category;
+            this.categoryList = cate;
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+    },
+    // 获取分类数据
+    changeCategory(){
+      this.goodsNameList = []
+      this.goodsSalesList = []
+      const api ="/api/product/getProductByCategory"
+      this.$axios
+          .post(api, {
+            categoryID: this.category_name,
+            currentPage: 1,
+            pageSize: 10
+          })
+          .then(res => {
+            // this.product = res.data.Product;
+            // this.total = res.data.total;
+            console.log(res)
+            for (let i = 0; i < res.data.Product.length; i++) {
+              this.goodsNameList.push(res.data.Product[i].product_name);
+              this.goodsSalesList.push(res.data.Product[i].product_sales);
+            }
+            this.initCharts(this.goodsNameList,this.goodsSalesList)
+
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+    },
   }
 }
 </script>
