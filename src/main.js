@@ -18,6 +18,10 @@ Vue.use(ElementUI);
 import Global from './Global';
 Vue.use(Global);
 
+// echarts
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
+
 import Axios from 'axios';
 Vue.prototype.$axios = Axios;
 // 全局请求拦截器

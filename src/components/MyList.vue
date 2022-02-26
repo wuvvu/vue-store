@@ -1,10 +1,3 @@
-<!--
- * @Description: 列表组件，用于首页、全部商品页面的商品列表
- * @Author: hai-27
- * @Date: 2020-02-07 16:23:00
- * @LastEditors: hai-27
- * @LastEditTime: 2020-04-05 13:22:22
- -->
 <template>
   <div id="myList" class="myList">
     <ul>
@@ -17,7 +10,7 @@
           <i class="el-icon-close delete" slot="reference" v-show="isDelete"></i>
         </el-popover>
         <router-link :to="{ path: '/goods/details', query: {productID:item.product_id} }">
-          <img :src="$target +item.product_picture" alt />
+          <img :src="item.product_picture" alt />
           <h2>{{item.product_name}}</h2>
           <h3>{{item.product_title}}</h3>
           <p>

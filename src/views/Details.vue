@@ -34,13 +34,13 @@
       <div class="block">
         <el-carousel height="560px" v-if="productPicture.length>1">
           <el-carousel-item v-for="item in productPicture" :key="item.id">
-            <img style="height:560px;" :src="$target + item.product_picture" :alt="item.intro" />
+            <img style="height:560px;" :src="item.product_picture" :alt="item.intro" />
           </el-carousel-item>
         </el-carousel>
         <div v-if="productPicture.length==1">
           <img
             style="height:560px;"
-            :src="$target + productPicture[0].product_picture"
+            :src="productPicture[0].product_picture"
             :alt="productPicture[0].intro"
           />
         </div>
@@ -51,7 +51,6 @@
       <div class="content">
         <h1 class="name">{{productDetails.product_name}}</h1>
         <p class="intro">{{productDetails.product_intro}}</p>
-        <p class="store">小米自营</p>
         <div class="price">
           <span>{{productDetails.product_selling_price}}元</span>
           <span
@@ -145,6 +144,7 @@ export default {
         })
         .then(res => {
           this.productPicture = res.data.ProductPicture;
+          console.log(this.productPicture)
         })
         .catch(err => {
           return Promise.reject(err);
