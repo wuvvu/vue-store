@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="search-box">
-      <el-select v-model="category_name" placeholder="请选择需要查询的分类" size="small">
+      <el-select v-model="category_name" placeholder="请选择需要查询的分类" size="small" @change="changeCategory">
         <el-option
           v-for="item in categoryList"
           :key="item.category_id"
@@ -16,26 +16,31 @@
         >
         </el-option>
       </el-select>
-      <el-input style="width:300px;margin: 0 15px;" size="small" placeholder="请输入商品名称" v-model="goodSearch"></el-input>
-      <el-button size="small">查询</el-button>
+      <el-input style="width:300px;margin: 0 15px;" size="small" placeholder="请输入商品名称" v-model="goodSearch">
+        <el-button slot="append" size="small" @click="getProductBySearch" >查询</el-button>
+      </el-input>
     </div>
-    <el-table :data="product" border style="width: 100%">
-      <el-table-column fixed prop="product_name" label="商品名称"></el-table-column>
-      <el-table-column prop="product_intro" label="商品描述"></el-table-column>
-      <el-table-column prop="product_title" label="商品标题"> </el-table-column>
-      <el-table-column prop="product_num" label="商品数量" width="120"> </el-table-column>
-      <el-table-column prop="product_price" label="原价" width="120"> </el-table-column>
-      <el-table-column prop="product_selling_price" label="活动价格" width="120"> </el-table-column>
-      <el-table-column prop="product_sales" label="销量" width="120"> </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
-        <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small"
+    <div class="shop-table">
+      <el-table :data="product" border style="width: 100%">
+        <el-table-column fixed prop="product_name" label="商品名称"></el-table-column>
+        <el-table-column prop="product_intro" label="商品描述"></el-table-column>
+        <el-table-column prop="product_title" label="商品标题"> </el-table-column>
+        <el-table-column prop="product_num" label="商品数量" width="120"> </el-table-column>
+        <el-table-column prop="product_price" label="原价" width="120"> </el-table-column>
+        <el-table-column prop="product_selling_price" label="活动价格" width="120"> </el-table-column>
+        <el-table-column prop="product_sales" label="销量" width="120"> </el-table-column>
+        <el-table-column fixed="right" label="操作" width="150">
+          <template slot-scope="scope">
+            <el-button @click="handleClick(scope.row)" type="text" size="small"
             >编辑</el-button
-          >
-          <el-button type="text" size="small" @click="delGoods(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            >
+
+            <el-button v-if="!scope.row.isDeleted" type="text" size="small" @click="delGoods(scope.row)">下架</el-button>
+            <el-button v-else type="text" size="small" @click="onShelf(scope.row)">重新上架</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <!-- 分页 -->
     <div class="pagination">
       <el-pagination
@@ -177,6 +182,7 @@ export default {
       dialogVisible:false,
       editDialogVisible:false,
       uploadForm: {
+        isDeleted:null,
         category_id: '', //分类
         product_intro: '', //描述
         product_name: '', //名称
@@ -299,29 +305,82 @@ export default {
           });
     },
 
-    // 删除商品
+    // 下架商品
     delGoods(e){
-      console.log(e)
-    //   const api = "/api/admin/product/updateProduct"
-    //   this.$axios
-    //       .post(api, {
-    //         product_id:e.product_id,
-    //       })
-    //       .then(res => {
-    //         console.log(res)
-    //       })
-    //       .catch(err => {
-    //         return Promise.reject(err);
-    //       });
-    // },
+      const api = "/api/admin/product/offShelf"
+      this.$axios
+          .post(api, {
+            product_id:e.product_id,
+          })
+          .then(res => {
+            this.$message.success(res.data.message)
+            this.getData()
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+    },
 
-    // 向后端请求全部商品或分类商品数据
+    // 重新上架
+    onShelf(e){
+      const api = "/api/admin/product/onShelf"
+      this.$axios
+          .post(api, {
+            product_id:e.product_id,
+          })
+          .then(res => {
+            this.$message.success(res.data.message)
+            this.getData()
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+    },
+
+    // 向后端请求全部商品
     getData() {
-      // 如果分类列表为空则请求全部商品数据，否则请求分类商品数据
-      const api ="/api/product/getAllProduct"
+      const api ="/api/admin/product/getAllProduct"
       this.$axios
           .post(api, {
             categoryID: this.categoryID,
+            currentPage: this.currentPage,
+            pageSize: this.pageSize
+          })
+          .then(res => {
+            this.product = res.data.Product;
+            this.total = res.data.total;
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+    },
+    // 获取分类数据
+    changeCategory(){
+      this.currentPage = 1;
+      this.goodSearch = "";
+      const api ="/api/product/getProductByCategory"
+      this.$axios
+          .post(api, {
+            categoryID: this.category_name,
+            currentPage: this.currentPage,
+            pageSize: this.pageSize
+          })
+          .then(res => {
+            this.product = res.data.Product;
+            this.total = res.data.total;
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+    },
+
+    // 通过搜索条件向后端请求商品数据
+    getProductBySearch() {
+      this.currentPage = 1;
+      this.category_name = 0;
+      this.$axios
+          .post("/api/product/getProductBySearch", {
+            search: this.goodSearch,
             currentPage: this.currentPage,
             pageSize: this.pageSize
           })
@@ -396,6 +455,11 @@ export default {
   padding: 10px;
   background-color: #fff;
   height: calc(100% - 20px);
+  display: flex;
+  flex-direction: column;
+}
+.shop-table{
+  flex-grow: 1;
 }
 .search-box{
     width: 100%;
