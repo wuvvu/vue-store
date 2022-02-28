@@ -110,7 +110,7 @@ export default {
   font-size: 16px;
   background-repeat: no-repeat;
   background-position: left top;
-  background-color: pink;
+  background-color: #dddddd;
   color: #fff;
   font-family: "Source Sans Pro";
   position: relative;

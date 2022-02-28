@@ -432,9 +432,17 @@ export default {
 
 
   created() {
-    // 获取分类列表
-    this.getCategory();
-    this.getData()
+    const user = JSON.parse(localStorage.getItem("user"))
+    if(user.userName !== "admin"){
+      this.$message.error("请使用管理员账号进入！")
+      this.$router.push({ path: "/" });
+      this.$router.go(0);
+    }else{
+      // 获取分类列表
+      this.getCategory();
+      this.getData()
+    }
+
   },
 };
 </script>

@@ -2,9 +2,11 @@
   <div class="home" id="home" name="home">
     <!-- 轮播图 -->
     <div class="block">
-      <el-carousel height="460px">
+      <el-carousel height="360px">
         <el-carousel-item v-for="item in carousel" :key="item.imgPath">
-          <img style="height:460px;" :src="item.imgPath" :alt="item.describes"/>
+          <div class="carousel-img">
+            <img style="width: 100%;height:100%;" :src="item.imgPath" :alt="item.describes"/>
+          </div>
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -204,4 +206,8 @@ export default {
 </script>
 <style scoped>
 @import "../assets/css/index.css";
+.carousel-img{
+  width: 100%;
+  height: 360px;
+}
 </style>

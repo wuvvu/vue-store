@@ -67,7 +67,7 @@ const routes = [
         name: 'BackStage',
         component: () => import('../views/BackStage.vue'),
         meta: {
-            requireAuth: true // 需要验证登录状态
+            requireAuth: false // 需要验证登录状态
         }
     },
     // {
@@ -100,6 +100,36 @@ const router = new Router({
     // base: '/dist',
     // mode: 'history',
     routes
+})
+
+router.beforeEach((to, from, next) => {
+    console.log(to)
+    console.log(from)
+    console.log(next)
+    const user = localStorage.getItem("user");
+    //
+    if(to.path == "/login"){
+        if(localStorage.getItem("user")){
+            next("/");
+        }else{
+            next();
+        }
+    }else if(to.path == "/shopManage" || to.path == "/shopManage"){
+       const userObj = JSON.parse(user)
+        // requireAuth:可以在路由元信息指定哪些页面需要登录权限
+        if( user && userObj.userName === "admin" ) {
+            next();
+        }else{
+            next("/login");
+        }
+    }else{
+        // requireAuth:可以在路由元信息指定哪些页面需要登录权限
+        if(user) {
+            next();
+        }else{
+            next("/login");
+        }
+    }
 })
 
 /* 由于Vue-router在3.1之后把$router.push()方法改为了Promise。所以假如没有回调函数，错误信息就会交给全局的路由错误处理。
