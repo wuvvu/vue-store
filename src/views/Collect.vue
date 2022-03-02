@@ -1,6 +1,6 @@
 
 <template>
-  <div class="collect">
+  <div class="collect"  v-loading="isAjax">
     <!-- Add a static page for my favorite module -->
     <div class="collect-header">
       <div class="collect-title">
@@ -27,17 +27,22 @@
 export default {
   data() {
     return {
-      collectList: []
+      collectList: [],
+      isAjax:false,
     };
   },
   activated() {
     // 获取收藏数据
+    this.isAjax = true
+
     this.$axios
       .post("/api/user/collect/getCollect", {
         user_id: this.$store.getters.getUser.user_id
       })
       .then(res => {
         if (res.data.code === "001") {
+          this.isAjax = false
+
           this.collectList = res.data.collectList;
         }
       })

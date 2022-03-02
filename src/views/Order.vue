@@ -1,6 +1,6 @@
 
 <template>
-  <div class="order">
+  <div class="order" v-loading="isAjax">
     <!-- 我的订单头部 -->
     <div class="order-header">
       <div class="order-header-content">
@@ -84,19 +84,20 @@ export default {
       orders: [], // 订单列表
       total: [], // 每个订单的商品数量及总价列表
       initData: false,
+      isAjax:false,
     };
   },
   created() {
     // 获取订单数据
+    this.isAjax = true
     this.$axios
       .post("/api/user/order/getOrder", {
         user_id: this.$store.getters.getUser.user_id
       })
       .then(res => {
         if (res.data.code === "001") {
-          console.log(this.orders)
+          this.isAjax = false
           this.orders = res.data.orders;
-          console.log(this.orders)
           this.$nextTick(()=>{
             this.initData = true;
           })

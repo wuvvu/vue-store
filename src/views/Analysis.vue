@@ -123,7 +123,6 @@ export default {
           .then(res => {
             // this.product = res.data.Product;
             // this.total = res.data.total;
-            console.log(res)
             for (let i = 0; i < res.data.Product.length; i++) {
               this.goodsNameList.push(res.data.Product[i].product_name);
               this.goodsSalesList.push(res.data.Product[i].product_sales);

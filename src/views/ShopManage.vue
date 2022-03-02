@@ -206,11 +206,9 @@ export default {
               productID: row.product_id
             })
             .then(res => {
-              console.log(res)
               this.uploadForm = row;
               this.uploadForm.product_picture = [];
               for(let i = 0; i<res.data.ProductPicture.length;i++){
-                console.log(res.data.ProductPicture[i].product_picture)
                 this.uploadForm.product_picture.push(res.data.ProductPicture[i].product_picture)
               }
               this.editDialogVisible = true;
@@ -272,8 +270,7 @@ export default {
             product_title: this.uploadForm.product_title, //  标题
             product_num: this.uploadForm.product_num, // 数量
           })
-          .then(res => {
-            console.log(res)
+          .then(() => {
             this.dialogVisible = false;
           })
           .catch(err => {
@@ -296,8 +293,7 @@ export default {
             product_title: this.uploadForm.product_title, //  标题
             product_num: this.uploadForm.product_num, // 数量
           })
-          .then(res => {
-            console.log(res)
+          .then(() => {
             this.editDialogVisible = false;
           })
           .catch(err => {

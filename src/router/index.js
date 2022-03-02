@@ -103,12 +103,9 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-    console.log(to)
-    console.log(from)
-    console.log(next)
     const user = localStorage.getItem("user");
     //
-    if(to.path == "/login"){
+    if(to.path == "/admin"){
         if(localStorage.getItem("user")){
             next("/");
         }else{
@@ -120,15 +117,13 @@ router.beforeEach((to, from, next) => {
         if( user && userObj.userName === "admin" ) {
             next();
         }else{
-            next("/login");
+            next("/");
         }
     }else{
         // requireAuth:可以在路由元信息指定哪些页面需要登录权限
-        if(user) {
-            next();
-        }else{
-            next("/login");
-        }
+
+        next();
+
     }
 })
 

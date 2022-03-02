@@ -138,7 +138,6 @@ export default {
         })
         .then(res => {
           this.productPicture = res.data.ProductPicture;
-          console.log(this.productPicture)
         })
         .catch(err => {
           return Promise.reject(err);
