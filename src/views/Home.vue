@@ -31,35 +31,6 @@
         </div>
         <!-- 一体机商品展示区域END -->
 
-        <!-- 家电商品展示区域 -->
-        <!--        <div class="appliance" id="promo-menu">-->
-        <!--          <div class="box-hd">-->
-        <!--            <div class="title">家电</div>-->
-        <!--            <div class="more" id="more">-->
-        <!--              <MyMenu :val="2" @fromChild="getChildMsg">-->
-        <!--                <span slot="1">热门</span>-->
-        <!--                <span slot="2">电视影音</span>-->
-        <!--              </MyMenu>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--          <div class="box-bd">-->
-        <!--&lt;!&ndash;            <div class="promo-list">-->
-        <!--              <ul>-->
-        <!--                <li>-->
-        <!--                  <img :src="$target +'public/imgs/appliance/appliance-promo1.png'" />-->
-        <!--                </li>-->
-        <!--                <li>-->
-        <!--                  <img :src="$target +'public/imgs/appliance/appliance-promo2.png'" />-->
-        <!--                </li>-->
-        <!--              </ul>-->
-        <!--            </div>&ndash;&gt;-->
-        <!--            <div class="list">-->
-        <!--              <MyList :list="applianceList" :isMore="true"></MyList>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </div>-->
-        <!-- 家电商品展示区域END -->
-
         <!-- 配件商品展示区域 -->
         <div class="accessory" id="promo-menu">
           <div class="box-hd">
