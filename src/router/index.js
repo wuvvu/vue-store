@@ -94,6 +94,15 @@ const routes = [
             requireAuth: false // 需要验证登录状态
         }
     }
+    ,
+    {
+        path: '/orderView',
+        name: 'OrderView',
+        component: () => import('../views/OrderView.vue'),
+        meta: {
+            requireAuth: false // 需要验证登录状态
+        }
+    }
 ]
 
 const router = new Router({
@@ -111,7 +120,7 @@ router.beforeEach((to, from, next) => {
         }else{
             next();
         }
-    }else if(to.path == "/shopManage" || to.path == "/shopManage"){
+    }else if(to.path == "/shopManage" || to.path == "/analysis" ||  to.path == "/orderView"){
        const userObj = JSON.parse(user)
         // requireAuth:可以在路由元信息指定哪些页面需要登录权限
         if( user && userObj.userName === "admin" ) {

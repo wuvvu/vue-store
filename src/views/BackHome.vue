@@ -56,6 +56,9 @@ export default {
       },{
         id:"/analysis",
         authName:"市场分析"
+      },{
+        id:"/orderView",
+        authName:"订单查看"
       }],
       // 是否折叠
       isCollapse: false,

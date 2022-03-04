@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      backStageRoute: ["/admin", "/backHome", "/shopManage","/analysis"],
+      backStageRoute: ["/admin", "/backHome", "/shopManage","/analysis","/orderView"],
       isBackStage: false,
       isReload: true,
       isBackLogin: false,
