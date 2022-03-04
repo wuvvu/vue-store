@@ -138,11 +138,11 @@ export default {
     this.getPromo("键鼠", "miTvList");
     this.getPromo("内存", "protectingShellList");
     this.getPromo("硬盘", "chargerList");
-    this.getPromo(
+    /*this.getPromo(
         ["键鼠", "内存", "硬盘"],
         "applianceList",
         "/api/product/getHotProduct"
-    );
+    );*/
     this.getPromo(
         ["键鼠", "内存", "硬盘"],
         "accessoryList",
